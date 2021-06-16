@@ -209,4 +209,4 @@ const getUser = async (token)=> {
 
 ```
 
-Good Luck! Constructive criticsm and ideas are welcome.
+Good Luck! Constructive criticism and ideas are welcome.

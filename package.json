@@ -1,8 +1,13 @@
 {
   "name": "node-mongoose-auth",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Token authentication for MEN applications using mongoose package.",
   "main": "index.js",
+  "contributors": [
+    "Abiira Nathan <nabiira2by2@gmail.com>"
+  ],
+  "repository": "abiiranathan/node-mongoose-auth",
+  "homepage": "https://github.com/abiiranathan/node-mongoose-auth",
   "keywords": [
     "node",
     "mongoose",
@@ -11,7 +16,9 @@
     "node mongoose",
     "node-mongoose-auth",
     "express-authentication",
-    "token authentication"
+    "token authentication",
+    "api",
+    "web"
   ],
   "author": "Abiira Nathan <nabiira2by2@gmail.com>",
   "license": "MIT",
@@ -19,5 +26,8 @@
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.14"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
   }
 }
