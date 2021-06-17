@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const UserSchema = require("./UserSchema");
 
 /**
+ * UserModel
+ *
  * You can not add any middleware, statics, or methods after
  * mongoose.model. If you must customize the UserSchema,
  * import the Schema seperately and customize it before

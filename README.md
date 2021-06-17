@@ -224,6 +224,14 @@ const getUser = async (token)=> {
 
 ```
 
+### Creating superusers from the CLI
+A command-line script has been added to ease the process of creating superusers.
+
+```bash
+npm run createsuperuser -- --mongo_uri="mongodb://localhost/mydb" --email="admin@company.com" --firstname="John" --lastname="Doe" --sex="Male" --password="password"
+```
+Run: npm run createsuperuser -- --help for details and available aliases.
+
 ### Gotchas
 1. **The way mongoose handles schema means that you can't easily customize the UserSchema or add middleware. If you must do so, make sure you import the UserSchema first and customize it before the call to mongoose.model().**
 
