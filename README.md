@@ -36,9 +36,9 @@ app.use("/api/auth", authRouter);
 
 ## Endpoints
 
-1. POST /api/auth/register
-2. POST /api/auth/login
-3. GET /api/auth/getuser
+1. `POST /api/auth/register`
+2. `POST /api/auth/login`
+3. `GET /api/auth/getuser`
 
 ## Schema
 *node-mongoose-auth* creates a user model with the following schema.
@@ -119,10 +119,25 @@ You can protect your other express API endpoints using **authMiddleware**.
 If the token sent in the request header is invalid or missing, a 403 Forbidden response is sent with a message of `Invalid or expired token` or `No authorization credentials sent` or `Invalid token!` or `User not found` if token is valid but no matching user.
 
 ```js
-const { authMiddleware } = require("node-mongoose-auth");
+const { authMiddleware, adminMiddleware } = require("node-mongoose-auth");
 
 app.get("/powers", authMiddleware, (req, res)=>{
   // auth middleware attaches the current user to the request or returns a 403 Forbidden response
+  const loggedInUser = req.user
+  if(user.isAdmin){
+    res.json("You are a superuser")
+  }else{
+    res.json("You are a regular user")
+  }
+});
+
+/**
+ * Admin routes. Note that the authMiddleware should always come
+ * first.
+*/
+app.get("/powers", authMiddleware, adminMiddleware, (req, res)=>{
+  // auth middleware attaches the current user to the request 
+  // admin middleware checks for isAdmin permissions
   const loggedInUser = req.user
   if(user.isAdmin){
     res.json("You are a superuser")
@@ -208,5 +223,28 @@ const getUser = async (token)=> {
 }
 
 ```
+
+### Gotchas
+1. **The way mongoose handles schema means that you can't easily customize the UserSchema or add middleware. If you must do so, make sure you import the UserSchema first and customize it before the call to mongoose.model().**
+
+```js
+const UserSchema = require("node-mongoose-auth/models/UserSchema");
+
+// Customize the schema
+UserSchema.pre("save", function(){
+  console.log("Saving new user...")
+})
+
+const { authRouter } = require("node-mongoose-auth")
+
+...
+
+app.use("/api/auth", authRouter);
+
+```
+2. You must use this middleware with json data only. 
+3. The Authorization header Prefix must be "Bearer" otherwise it will throw `Invalid token prefix error.`
+4. Failure to set the **SECRET_KEY** environment variable with cause runtime errors.
+
 
 Good Luck! Constructive criticism and ideas are welcome.

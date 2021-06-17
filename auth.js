@@ -79,11 +79,15 @@ async function generateToken(user) {
 }
 
 /**
+ * Extracts the Authorization Header token from the request
+ * and uses jwt to verify it, look up matching user
+ * and attaches the user to the request. Only active users
+ * are allowed.
  *
  * @param {*} req
  * @param {*} res
  * @param {*} next
- * @returns response
+ *
  */
 const authMiddleware = async (req, res, next) => {
   const tokenString = req.headers.authorization;
@@ -103,22 +107,38 @@ const authMiddleware = async (req, res, next) => {
   // if token is invalid or expired
   try {
     const payload = await validateToken(token);
-
     // Now get the user from the id in the payload
     const user = await User.findById(payload.id);
 
-    if (user == null) {
-      return res.status(403).json({ message: "User not found!" });
-    } else {
-      // Proceed with the happy path
-      // Attach the user to the request
-      req.user = user;
+    if (!user) return res.status(403).json({ message: "User not found!" });
 
-      // Proceed with other middleware
-      next();
-    }
+    if (user && !user.isActive)
+      return res.status(403).json({ message: "Your account is not active" });
+
+    // Proceed with the happy path
+    req.user = user;
+    next();
   } catch (error) {
     res.status(403).json({ message: "Invalid or expired token!" });
+  }
+};
+
+/** Note: Apply admin middleware after authMiddleware
+ * Otherwise req.user will be undefined!
+ */
+const adminMiddleware = (req, res, next) => {
+  if (req.user && req.user.isAdmin) {
+    next();
+  } else {
+    res.status(403).json({ message: "This route is for authenticated admin users" });
+  }
+};
+
+const isStaffMiddleware = (req, res, next) => {
+  if (req.user && req.user.isStaff) {
+    next();
+  } else {
+    res.status(403).json({ message: "This route is for authenticated admin users" });
   }
 };
 
@@ -128,4 +148,6 @@ module.exports = {
   generateToken,
   validateToken,
   authMiddleware,
+  adminMiddleware,
+  isStaffMiddleware,
 };
