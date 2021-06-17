@@ -1,6 +1,6 @@
 {
   "name": "node-mongoose-auth",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Token authentication for MEN applications using mongoose package.",
   "main": "index.js",
   "contributors": [
